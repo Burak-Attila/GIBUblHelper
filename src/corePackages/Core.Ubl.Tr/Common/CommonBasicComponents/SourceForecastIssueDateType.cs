@@ -1,0 +1,18 @@
+namespace Core.Ubl.Tr.Common
+{
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")]
+    [System.Xml.Serialization.XmlRootAttribute("SourceForecastIssueDate", Namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", IsNullable = false)]
+    public partial class SourceForecastIssueDateType : DateType
+    {
+		public static implicit operator SourceForecastIssueDateType(System.DateTime val)
+		{
+			return new SourceForecastIssueDateType
+			{
+				Value = val
+			};
+		}
+	}
+}
