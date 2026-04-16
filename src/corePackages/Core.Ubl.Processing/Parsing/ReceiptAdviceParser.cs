@@ -14,9 +14,12 @@ public sealed class ReceiptAdviceParser : UblParserBase
 
     public override UblDocumentKind Kind => UblDocumentKind.ReceiptAdvice;
 
-    protected override UblDocumentSummary ParseCore(XmlReader reader)
+    protected override object DeserializeTyped(XmlReader reader) =>
+        (ReceiptAdviceType)Deserialize(typeof(ReceiptAdviceType), reader);
+
+    protected override UblDocumentSummary BuildSummary(object typed)
     {
-        var advice = (ReceiptAdviceType)Deserialize(typeof(ReceiptAdviceType), reader);
+        var advice = (ReceiptAdviceType)typed;
         return new UblDocumentSummary(
             Kind,
             advice.ID?.Value,

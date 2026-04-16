@@ -11,4 +11,8 @@ public interface IUblDocumentDispatcher
     UblDocumentSummary Dispatch(byte[] xml);
 
     UblDocumentSummary Dispatch(UblDocumentKind kind, byte[] xml);
+
+    UblDocument DispatchFull(byte[] xml);
+
+    UblDocument DispatchFull(UblDocumentKind kind, byte[] xml);
 }

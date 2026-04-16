@@ -14,9 +14,12 @@ public sealed class InvoiceParser : UblParserBase
 
     public override UblDocumentKind Kind => UblDocumentKind.Invoice;
 
-    protected override UblDocumentSummary ParseCore(XmlReader reader)
+    protected override object DeserializeTyped(XmlReader reader) =>
+        (InvoiceType)Deserialize(typeof(InvoiceType), reader);
+
+    protected override UblDocumentSummary BuildSummary(object typed)
     {
-        var invoice = (InvoiceType)Deserialize(typeof(InvoiceType), reader);
+        var invoice = (InvoiceType)typed;
         return new UblDocumentSummary(
             Kind,
             invoice.ID?.Value,

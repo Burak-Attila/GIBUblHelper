@@ -8,7 +8,8 @@ namespace Core.Ubl.Processing.Parsing;
 
 /// <summary>
 /// Shared deserialization pipeline for all UBL document parsers.
-/// Applies safe <see cref="XmlReaderSettings"/> (no DTD, no external resolver).
+/// Applies safe <see cref="XmlReaderSettings"/> (no DTD, no external resolver)
+/// and exposes both summary and full-typed parsing.
 /// </summary>
 public abstract class UblParserBase : IUblDocumentParser
 {
@@ -23,15 +24,21 @@ public abstract class UblParserBase : IUblDocumentParser
 
     public abstract UblDocumentKind Kind { get; }
 
-    public UblDocumentSummary Parse(byte[] xml)
+    public UblDocumentSummary Parse(byte[] xml) => ParseFull(xml).Summary;
+
+    public UblDocument ParseFull(byte[] xml)
     {
         ArgumentNullException.ThrowIfNull(xml);
         using var ms = new MemoryStream(xml, writable: false);
         using var reader = XmlReader.Create(ms, BuildReaderSettings(_options));
-        return ParseCore(reader);
+        var typed = DeserializeTyped(reader);
+        var summary = BuildSummary(typed);
+        return new UblDocument(Kind, summary, typed);
     }
 
-    protected abstract UblDocumentSummary ParseCore(XmlReader reader);
+    protected abstract object DeserializeTyped(XmlReader reader);
+
+    protected abstract UblDocumentSummary BuildSummary(object typed);
 
     protected object Deserialize(Type type, XmlReader reader)
     {

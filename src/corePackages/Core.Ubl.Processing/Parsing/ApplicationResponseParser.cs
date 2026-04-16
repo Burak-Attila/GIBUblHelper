@@ -14,9 +14,12 @@ public sealed class ApplicationResponseParser : UblParserBase
 
     public override UblDocumentKind Kind => UblDocumentKind.ApplicationResponse;
 
-    protected override UblDocumentSummary ParseCore(XmlReader reader)
+    protected override object DeserializeTyped(XmlReader reader) =>
+        (ApplicationResponseType)Deserialize(typeof(ApplicationResponseType), reader);
+
+    protected override UblDocumentSummary BuildSummary(object typed)
     {
-        var appResp = (ApplicationResponseType)Deserialize(typeof(ApplicationResponseType), reader);
+        var appResp = (ApplicationResponseType)typed;
         return new UblDocumentSummary(
             Kind,
             appResp.ID?.Value,

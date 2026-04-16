@@ -9,5 +9,10 @@ namespace Core.Ubl.Processing.Abstractions;
 /// </summary>
 public interface IEnvelopeProcessor
 {
+    /// <summary>Returns only header-level summaries.</summary>
     UblProcessingResult Process(byte[] payload, string? fileName = null);
+
+    /// <summary>Returns summaries + the fully-typed UBL objects
+    /// (InvoiceType, DespatchAdviceType, ...).</summary>
+    UblFullProcessingResult ProcessFull(byte[] payload, string? fileName = null);
 }

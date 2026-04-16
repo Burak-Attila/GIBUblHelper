@@ -14,9 +14,12 @@ public sealed class CreditNoteParser : UblParserBase
 
     public override UblDocumentKind Kind => UblDocumentKind.CreditNote;
 
-    protected override UblDocumentSummary ParseCore(XmlReader reader)
+    protected override object DeserializeTyped(XmlReader reader) =>
+        (CreditNoteType)Deserialize(typeof(CreditNoteType), reader);
+
+    protected override UblDocumentSummary BuildSummary(object typed)
     {
-        var note = (CreditNoteType)Deserialize(typeof(CreditNoteType), reader);
+        var note = (CreditNoteType)typed;
         return new UblDocumentSummary(
             Kind,
             note.ID?.Value,

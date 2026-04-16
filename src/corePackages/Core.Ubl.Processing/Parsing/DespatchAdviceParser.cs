@@ -14,9 +14,12 @@ public sealed class DespatchAdviceParser : UblParserBase
 
     public override UblDocumentKind Kind => UblDocumentKind.DespatchAdvice;
 
-    protected override UblDocumentSummary ParseCore(XmlReader reader)
+    protected override object DeserializeTyped(XmlReader reader) =>
+        (DespatchAdviceType)Deserialize(typeof(DespatchAdviceType), reader);
+
+    protected override UblDocumentSummary BuildSummary(object typed)
     {
-        var advice = (DespatchAdviceType)Deserialize(typeof(DespatchAdviceType), reader);
+        var advice = (DespatchAdviceType)typed;
         return new UblDocumentSummary(
             Kind,
             advice.ID?.Value,
