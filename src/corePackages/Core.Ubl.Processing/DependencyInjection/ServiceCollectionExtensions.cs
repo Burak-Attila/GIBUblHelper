@@ -42,6 +42,29 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
+    /// Registers the UBL processing pipeline using a pre-built options instance.
+    /// If <paramref name="options"/> is null, default values are used.
+    /// </summary>
+    public static IServiceCollection AddUblProcessing(
+        this IServiceCollection services,
+        UblProcessingOptions? options)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        if (options is not null)
+            return services.AddUblProcessing(opts =>
+            {
+                opts.MaxInputSizeBytes = options.MaxInputSizeBytes;
+                opts.MaxUncompressedZipSizeBytes = options.MaxUncompressedZipSizeBytes;
+                opts.MaxZipCompressionRatio = options.MaxZipCompressionRatio;
+                opts.MaxZipEntries = options.MaxZipEntries;
+                opts.AllowDtdProcessing = options.AllowDtdProcessing;
+            });
+
+        return services.AddUblProcessing();
+    }
+
+    /// <summary>
     /// Registers the UBL processing pipeline and binds options from the given configuration section.
     /// </summary>
     public static IServiceCollection AddUblProcessing(
