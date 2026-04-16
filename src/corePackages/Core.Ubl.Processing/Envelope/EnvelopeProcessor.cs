@@ -90,12 +90,30 @@ public sealed class EnvelopeProcessor : IEnvelopeProcessor
 
     private UblProcessingResult ProcessSbd(byte[] xml)
     {
-        var envelopeSummary = EnvelopeUblHelper.GetSummary(xml);
-        // SBD itself does not inline UBL business documents; the envelope summary is the payload.
+        var sbdSerializer = _serializerCache.Get<StandardBusinessDocument>();
+        StandardBusinessDocument sbd;
+        using (var ms = new MemoryStream(xml, writable: false))
+        using (var reader = XmlReader.Create(ms, UblParserBase.BuildReaderSettings(_options)))
+        {
+            sbd = (StandardBusinessDocument?)sbdSerializer.Deserialize(reader)
+                ?? throw new InvalidOperationException("StandardBusinessDocument deserialization returned null.");
+        }
+
+        var envelopeSummary = sbd.StandardBusinessDocumentHeader is null
+            ? null
+            : EnvelopeUblHelper.GetSummary(xml);
+
+        var documents = new List<UblDocumentSummary>();
+        if (sbd.Any is not null)
+        {
+            var inner = ProcessXml(Encoding.UTF8.GetBytes(sbd.Any.OuterXml));
+            documents.AddRange(inner.Documents);
+        }
+
         return new UblProcessingResult(
             UblDocumentKind.StandardBusinessDocument,
             envelopeSummary,
-            Array.Empty<UblDocumentSummary>());
+            documents);
     }
 
     private UblProcessingResult ProcessPackage(byte[] xml)
