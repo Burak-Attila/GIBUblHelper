@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <PackageId>GIBUblHelper</PackageId>
+    <Description>GİB e-Fatura / e-Arşiv UBL-TR yardımcı kütüphanesi.</Description>
+    <Authors>GIBUblHelper</Authors>
+  </PropertyGroup>
+
+</Project>
