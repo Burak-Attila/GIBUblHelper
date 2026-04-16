@@ -2,7 +2,7 @@ using Core.Ubl.Processing.Caching;
 using Core.Ubl.Processing.Models;
 using Core.Ubl.Processing.Options;
 using Core.Ubl.Processing.Parsing;
-using Microsoft.Extensions.Options;
+using MsOptions = Microsoft.Extensions.Options.Options;
 
 namespace Core.Ubl.Processing.Tests;
 
@@ -14,7 +14,7 @@ public class InvoiceParserTests
         var xml = File.ReadAllBytes(Path.Combine("Fixtures", "invoice-sample.xml"));
         var parser = new InvoiceParser(
             new UblSerializerCache(),
-            Options.Create(new UblProcessingOptions()));
+            MsOptions.Create(new UblProcessingOptions()));
 
         var summary = parser.Parse(xml);
 

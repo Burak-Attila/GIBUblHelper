@@ -2,14 +2,14 @@ using System.Text;
 using Core.Ubl.Processing.Dispatching;
 using Core.Ubl.Processing.Models;
 using Core.Ubl.Processing.Options;
-using Microsoft.Extensions.Options;
+using MsOptions = Microsoft.Extensions.Options.Options;
 
 namespace Core.Ubl.Processing.Tests;
 
 public class UblRootInspectorTests
 {
     private static readonly UblRootInspector _inspector =
-        new(Options.Create(new UblProcessingOptions()));
+        new(MsOptions.Create(new UblProcessingOptions()));
 
     [Theory]
     [InlineData("<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\"/>", UblDocumentKind.Invoice)]
