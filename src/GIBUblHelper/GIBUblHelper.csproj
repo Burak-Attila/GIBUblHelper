@@ -12,4 +12,10 @@
     <Authors>GIBUblHelper</Authors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\corePackages\Core.Ubl.Envelope\Core.Ubl.EnvelopeSerialization.csproj" />
+    <ProjectReference Include="..\corePackages\Core.Ubl.Tr\Core.Ubl.Tr.csproj" />
+    <ProjectReference Include="..\corePackages\Core.Ubl.Processing\Core.Ubl.Processing.csproj" />
+  </ItemGroup>
+
 </Project>
