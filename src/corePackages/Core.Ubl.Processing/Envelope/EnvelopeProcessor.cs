@@ -41,6 +41,7 @@ public sealed class EnvelopeProcessor : IEnvelopeProcessor
         var full = ProcessFull(payload, fileName);
         return new UblProcessingResult(
             full.RootKind,
+            full.EnvelopeType,
             full.EnvelopeSummary,
             full.Documents.Select(d => d.Summary).ToList());
     }
@@ -66,6 +67,7 @@ public sealed class EnvelopeProcessor : IEnvelopeProcessor
 
         var documents = new List<UblDocument>(entries.Count);
         EnvelopeSummary? envelopeSummary = null;
+        GibEnvelopeType? envelopeType = null;
         UblDocumentKind rootKind = UblDocumentKind.Unknown;
 
         foreach (var (_, xml) in entries)
@@ -73,11 +75,12 @@ public sealed class EnvelopeProcessor : IEnvelopeProcessor
             var sub = ProcessXml(xml);
             documents.AddRange(sub.Documents);
             envelopeSummary ??= sub.EnvelopeSummary;
+            envelopeType ??= sub.EnvelopeType;
             if (rootKind == UblDocumentKind.Unknown)
                 rootKind = sub.RootKind;
         }
 
-        return new UblFullProcessingResult(rootKind, envelopeSummary, documents);
+        return new UblFullProcessingResult(rootKind, envelopeType, envelopeSummary, documents);
     }
 
     private UblFullProcessingResult ProcessXml(byte[] xml)
@@ -92,7 +95,7 @@ public sealed class EnvelopeProcessor : IEnvelopeProcessor
                 or UblDocumentKind.DespatchAdvice
                 or UblDocumentKind.ReceiptAdvice
                 or UblDocumentKind.ApplicationResponse => ProcessSingle(kind, xml),
-            _ => new UblFullProcessingResult(UblDocumentKind.Unknown, null, Array.Empty<UblDocument>())
+            _ => new UblFullProcessingResult(UblDocumentKind.Unknown, null, null, Array.Empty<UblDocument>())
         };
     }
 
@@ -111,6 +114,13 @@ public sealed class EnvelopeProcessor : IEnvelopeProcessor
             ? null
             : EnvelopeUblHelper.GetSummary(xml);
 
+        var envelopeType = GibEnvelopeTypeParser.Parse(envelopeSummary?.DocumentType);
+
+        _logger.LogDebug(
+            "SBD parsed: EnvelopeType={EnvelopeType}, UUID={Uuid}",
+            envelopeType,
+            envelopeSummary?.InstanceIdentifier);
+
         var documents = new List<UblDocument>();
         if (sbd.Any is not null)
         {
@@ -120,6 +130,7 @@ public sealed class EnvelopeProcessor : IEnvelopeProcessor
 
         return new UblFullProcessingResult(
             UblDocumentKind.StandardBusinessDocument,
+            envelopeType,
             envelopeSummary,
             documents);
     }
@@ -153,13 +164,13 @@ public sealed class EnvelopeProcessor : IEnvelopeProcessor
             }
         }
 
-        return new UblFullProcessingResult(UblDocumentKind.Package, null, documents);
+        return new UblFullProcessingResult(UblDocumentKind.Package, null, null, documents);
     }
 
     private UblFullProcessingResult ProcessSingle(UblDocumentKind kind, byte[] xml)
     {
         var document = _dispatcher.DispatchFull(kind, xml);
-        return new UblFullProcessingResult(kind, null, new[] { document });
+        return new UblFullProcessingResult(kind, null, null, new[] { document });
     }
 
     private static bool IsZip(byte[] payload, string? fileName)

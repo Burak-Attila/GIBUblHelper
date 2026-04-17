@@ -9,5 +9,6 @@ namespace Core.Ubl.Processing.Models;
 /// </summary>
 public sealed record UblFullProcessingResult(
     UblDocumentKind RootKind,
+    GibEnvelopeType? EnvelopeType,
     EnvelopeSummary? EnvelopeSummary,
     IReadOnlyList<UblDocument> Documents);
